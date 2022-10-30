@@ -1,0 +1,40 @@
+fileFormatVersion: 2
+guid: 8d805051916fe6f478bf711100bcaf0e
+importerOverride: ZEPETO.Script.Compiler:ZEPETO.Script:TypescriptAssetImporter
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: -1123457745, guid: 54cf806323ffe4418a4ce4cc63fe6b9d, type: 3}
+  isAssemblyDeclarations: 0
+  assembly: 
+  generateAllTypes: 1
+  types: []
+  generateWrapper: 0
+  overrideWrapperTypes: 0
+  wrapperTypes: []
+  WrapperFilters: []
+  wrapperOutputDirectory: Generated
+  compiledResult: '{"source":"\"use strict\";\r\nObject.defineProperty(exports, \"__esModule\",
+    { value: true });\r\nconst UnityEngine_1 = require(\"UnityEngine\");\r\nconst
+    ZEPETO_Script_1 = require(\"ZEPETO.Script\");\r\nconst Ground_1 = require(\"./Ground\");\r\nclass
+    GroundManager extends ZEPETO_Script_1.ZepetoScriptBehaviour {\r\n    constructor()
+    {\r\n        super(...arguments);\r\n        //Private cached instance of all
+    of the ground objects. (Will be filled by InitializeGround() during runtime.
+    )\r\n        this.groundList = [];\r\n    }\r\n    //Grab Ground Manager if it
+    exists and cache the instance. \r\n    static GetInstance() {\r\n        if (!GroundManager.instance)
+    {\r\n            const targetObj = UnityEngine_1.GameObject.Find(\"Ground Manager\");\r\n           
+    if (targetObj)\r\n                GroundManager.instance = targetObj.GetComponent($typeof(GroundManager));\r\n       
+    }\r\n        return GroundManager.instance;\r\n    }\r\n    Awake() {\r\n       
+    this.InitializeGround();\r\n    }\r\n    InitializeGround() {\r\n        this.groundList
+    = [];\r\n        // Grab the ground component instances and cache them to our
+    array. \r\n        for (let i = 0; i < this.groundListGameObject.childCount;
+    i++) {\r\n            let ground = this.groundListGameObject.GetChild(i).GetComponent($typeof(Ground_1.default));\r\n           
+    //Change the naming scheme to \"Ground_x\" for later server code. \r\n           
+    ground.gameObject.name = `Ground_${i}`;\r\n            this.groundList[i] = ground;\r\n       
+    }\r\n    }\r\n    ResetGround() {\r\n        //Set to None\r\n        this.groundList.forEach(g
+    => g.SetType(0));\r\n    }\r\n}\r\nexports.default = GroundManager;\r\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiR3JvdW5kTWFuYWdlci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIkdyb3VuZE1hbmFnZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSw2Q0FBOEQ7QUFDOUQsaURBQXFEO0FBQ3JELHFDQUE4QjtBQUU5QixNQUFxQixhQUFjLFNBQVEscUNBQXFCO0lBQWhFOztRQXNCSSwrR0FBK0c7UUFDeEcsZUFBVSxHQUFhLEVBQUUsQ0FBQztJQXVCckMsQ0FBQztJQTFDQSwyREFBMkQ7SUFDMUQsTUFBTSxDQUFDLFdBQVc7UUFDZCxJQUFJLENBQUMsYUFBYSxDQUFDLFFBQVEsRUFBRTtZQUN6QixNQUFNLFNBQVMsR0FBRyx3QkFBVSxDQUFDLElBQUksQ0FBQyxnQkFBZ0IsQ0FBQyxDQUFDO1lBQ3BELElBQUksU0FBUztnQkFBRSxhQUFhLENBQUMsUUFBUSxHQUFHLFNBQVMsQ0FBQyxZQUFZLFNBQUMsYUFBYSxFQUFHLENBQUM7U0FDbkY7UUFDRCxPQUFPLGFBQWEsQ0FBQyxRQUFRLENBQUM7SUFDbEMsQ0FBQztJQWNDLEtBQUs7UUFDRCxJQUFJLENBQUMsZ0JBQWdCLEVBQUUsQ0FBQztJQUM1QixDQUFDO0lBRU8sZ0JBQWdCO1FBQ3RCLElBQUksQ0FBQyxVQUFVLEdBQUcsRUFBRSxDQUFDO1FBRXJCLG9FQUFvRTtRQUNwRSxLQUFLLElBQUksQ0FBQyxHQUFHLENBQUMsRUFBRSxDQUFDLEdBQUcsSUFBSSxDQUFDLG9CQUFvQixDQUFDLFVBQVUsRUFBRSxDQUFDLEVBQUUsRUFBRTtZQUMzRCxJQUFJLE1BQU0sR0FBWSxJQUFJLENBQUMsb0JBQW9CLENBQUMsUUFBUSxDQUFDLENBQUMsQ0FBQyxDQUFDLFlBQVksU0FBQyxnQkFBTSxFQUFHLENBQUM7WUFDckYsZ0VBQWdFO1lBQzlELE1BQU0sQ0FBQyxVQUFVLENBQUMsSUFBSSxHQUFHLFVBQVUsQ0FBQyxFQUFFLENBQUM7WUFDdkMsSUFBSSxDQUFDLFVBQVUsQ0FBQyxDQUFDLENBQUMsR0FBRyxNQUFNLENBQUM7U0FDL0I7SUFDSCxDQUFDO0lBRUQsV0FBVztRQUNQLGFBQWE7UUFDYixJQUFJLENBQUMsVUFBVSxDQUFDLE9BQU8sQ0FBQyxDQUFDLENBQUMsRUFBRSxDQUFDLENBQUMsQ0FBQyxPQUFPLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQztJQUMvQyxDQUFDO0NBRUo7QUE5Q0QsZ0NBOENDIn0=","assetPath":"Assets/Scripts/GroundManager.ts","manifest":{"properties":[{"assembly":"UnityEngine.CoreModule","name":"materialNone","type":"UnityEngine.Material","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.CoreModule","name":"materialRed","type":"UnityEngine.Material","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.CoreModule","name":"materialPurple","type":"UnityEngine.Material","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.CoreModule","name":"groundListGameObject","type":"UnityEngine.Transform","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"","name":"groundList","type":"C:/Users/Hyunm/Documents/UNIQx/Projects/Zepeto/MyProjects/territory-control-base/Assets/Scripts/Ground.default","isArray":true,"enumKeys":[],"enumValues":[],"attributes":[]}],"name":"GroundManager","description":""},"isCompiled":true}'
+  typescriptHash: 1d5c3f82a8952f610559488507a617d2

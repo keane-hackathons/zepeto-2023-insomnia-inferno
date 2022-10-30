@@ -1,0 +1,38 @@
+fileFormatVersion: 2
+guid: c28fed0d008ebca4585a1325335fc11e
+importerOverride: ZEPETO.Script.Compiler:ZEPETO.Script:TypescriptAssetImporter
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: -1123457745, guid: 54cf806323ffe4418a4ce4cc63fe6b9d, type: 3}
+  isAssemblyDeclarations: 0
+  assembly: 
+  generateAllTypes: 1
+  types: []
+  generateWrapper: 0
+  overrideWrapperTypes: 0
+  wrapperTypes: []
+  WrapperFilters: []
+  wrapperOutputDirectory: Generated
+  compiledResult: '{"source":"\"use strict\";\r\nObject.defineProperty(exports, \"__esModule\",
+    { value: true });\r\nconst ZEPETO_Script_1 = require(\"ZEPETO.Script\");\r\nconst
+    GroundManager_1 = require(\"./GroundManager\");\r\nvar GroundType;\r\n(function
+    (GroundType) {\r\n    GroundType[GroundType[\"None\"] = 0] = \"None\";\r\n   
+    GroundType[GroundType[\"Red\"] = 1] = \"Red\";\r\n    GroundType[GroundType[\"Purple\"]
+    = 2] = \"Purple\";\r\n})(GroundType || (GroundType = {}));\r\nclass Ground extends
+    ZEPETO_Script_1.ZepetoScriptBehaviour {\r\n    constructor() {\r\n        super(...arguments);\r\n       
+    this.groundType = GroundType.None;\r\n    }\r\n    SetType(groundType) {\r\n       
+    // Apply the corresponding material based on the ground type. \r\n        switch
+    (groundType) {\r\n            case GroundType.None:\r\n                this.renderer.material
+    = GroundManager_1.default.GetInstance().materialNone;\r\n                break;\r\n           
+    case GroundType.Red:\r\n                this.renderer.material = GroundManager_1.default.GetInstance().materialRed;\r\n               
+    break;\r\n            case GroundType.Purple:\r\n                this.renderer.material
+    = GroundManager_1.default.GetInstance().materialPurple;\r\n                break;\r\n       
+    }\r\n        // Apply type\r\n        this.groundType = groundType;\r\n    }\r\n   
+    GetType() {\r\n        return this.groundType;\r\n    }\r\n}\r\nexports.default
+    = Ground;\r\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiR3JvdW5kLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiR3JvdW5kLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQ0EsaURBQXFEO0FBQ3JELG1EQUE0QztBQUc1QyxJQUFLLFVBQWdDO0FBQXJDLFdBQUssVUFBVTtJQUFHLDJDQUFJLENBQUE7SUFBRSx5Q0FBRyxDQUFBO0lBQUUsK0NBQU0sQ0FBQTtBQUFDLENBQUMsRUFBaEMsVUFBVSxLQUFWLFVBQVUsUUFBc0I7QUFFckMsTUFBcUIsTUFBTyxTQUFRLHFDQUFxQjtJQUF6RDs7UUFFVyxlQUFVLEdBQWUsVUFBVSxDQUFDLElBQUksQ0FBQztJQXdCcEQsQ0FBQztJQXRCRyxPQUFPLENBQUMsVUFBc0I7UUFDMUIsOERBQThEO1FBQzlELFFBQVEsVUFBVSxFQUFFO1lBQ2hCLEtBQUssVUFBVSxDQUFDLElBQUk7Z0JBQ2hCLElBQUksQ0FBQyxRQUFRLENBQUMsUUFBUSxHQUFHLHVCQUFhLENBQUMsV0FBVyxFQUFFLENBQUMsWUFBWSxDQUFDO2dCQUNsRSxNQUFNO1lBQ1YsS0FBSyxVQUFVLENBQUMsR0FBRztnQkFDZixJQUFJLENBQUMsUUFBUSxDQUFDLFFBQVEsR0FBRyx1QkFBYSxDQUFDLFdBQVcsRUFBRSxDQUFDLFdBQVcsQ0FBQztnQkFDakUsTUFBTTtZQUNWLEtBQUssVUFBVSxDQUFDLE1BQU07Z0JBQ2xCLElBQUksQ0FBQyxRQUFRLENBQUMsUUFBUSxHQUFHLHVCQUFhLENBQUMsV0FBVyxFQUFFLENBQUMsY0FBYyxDQUFDO2dCQUNwRSxNQUFNO1NBQ2I7UUFFRCxhQUFhO1FBQ2IsSUFBSSxDQUFDLFVBQVUsR0FBRyxVQUFVLENBQUM7SUFDakMsQ0FBQztJQUVELE9BQU87UUFDSCxPQUFPLElBQUksQ0FBQyxVQUFVLENBQUM7SUFDM0IsQ0FBQztDQUVKO0FBMUJELHlCQTBCQyJ9","assetPath":"Assets/Scripts/Ground.ts","manifest":{"properties":[{"assembly":"UnityEngine.CoreModule","name":"renderer","type":"UnityEngine.MeshRenderer","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"","name":"groundType","type":"GroundType","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]}],"name":"Ground","description":""},"isCompiled":true}'
+  typescriptHash: be9e821a76792e508936a18c8ac1b5c8

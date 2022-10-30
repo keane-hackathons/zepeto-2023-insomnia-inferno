@@ -1,0 +1,37 @@
+fileFormatVersion: 2
+guid: acc5ab15a79c9194ab8e8d3215591005
+importerOverride: ZEPETO.Script.Compiler:ZEPETO.Script:TypescriptAssetImporter
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: -1123457745, guid: 54cf806323ffe4418a4ce4cc63fe6b9d, type: 3}
+  isAssemblyDeclarations: 0
+  assembly: 
+  generateAllTypes: 1
+  types: []
+  generateWrapper: 0
+  overrideWrapperTypes: 0
+  wrapperTypes: []
+  WrapperFilters: []
+  wrapperOutputDirectory: Generated
+  compiledResult: '{"source":"\"use strict\";\r\nObject.defineProperty(exports, \"__esModule\",
+    { value: true });\r\nconst ZEPETO_Multiplay_1 = require(\"ZEPETO.Multiplay\");\r\nconst
+    ZEPETO_Script_1 = require(\"ZEPETO.Script\");\r\nconst ClientScript_1 = require(\"./ClientScript\");\r\nconst
+    Ground_1 = require(\"./Ground\");\r\nclass GroundTrigger extends ZEPETO_Script_1.ZepetoScriptBehaviour
+    {\r\n    Start() {\r\n        this.ground = this.GetComponentInParent($typeof(Ground_1.default));\r\n   
+    }\r\n    OnTriggerEnter(coll) {\r\n        //Grab the team id based on the character
+    name (which should be the player ID)\r\n        const myTeam = ClientScript_1.default.GetInstance()?.GetTeam(coll.gameObject.name);\r\n       
+    //Grab the ground type id\r\n        const groundType = this.ground.GetType();\r\n       
+    //Create the message to send to the server. \r\n        const message = new ZEPETO_Multiplay_1.RoomData();\r\n       
+    message.Add(\"team\", myTeam);\r\n        message.Add(\"groundName\", this.transform.parent.name);\r\n       
+    message.Add(\"groundType\", groundType);\r\n        // Only apply to ground that
+    isn''t yours. \r\n        if (groundType != myTeam) {\r\n            const client
+    = ClientScript_1.default.GetInstance();\r\n            //Send the message up
+    to the server. \r\n            client.multiplayRoom.Send(ClientScript_1.MultiplayMessageType.ChangeGroundColor,
+    message.GetObject());\r\n        }\r\n        this.tileBounceAnimator.SetTrigger(\"Tile_Bounce\");\r\n   
+    }\r\n}\r\nexports.default = GroundTrigger;\r\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiR3JvdW5kVHJpZ2dlci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIkdyb3VuZFRyaWdnZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFDQSx1REFBNEM7QUFDNUMsaURBQXFEO0FBQ3JELGlEQUFvRTtBQUNwRSxxQ0FBOEI7QUFFOUIsTUFBcUIsYUFBYyxTQUFRLHFDQUFxQjtJQU01RCxLQUFLO1FBQ0QsSUFBSSxDQUFDLE1BQU0sR0FBRyxJQUFJLENBQUMsb0JBQW9CLFNBQUMsZ0JBQU0sRUFBRyxDQUFDO0lBQ3RELENBQUM7SUFFRCxjQUFjLENBQUMsSUFBYztRQUV6Qiw4RUFBOEU7UUFDOUUsTUFBTSxNQUFNLEdBQUcsc0JBQVksQ0FBQyxXQUFXLEVBQUUsRUFBRSxPQUFPLENBQUMsSUFBSSxDQUFDLFVBQVUsQ0FBQyxJQUFJLENBQUMsQ0FBQztRQUV6RSx5QkFBeUI7UUFDekIsTUFBTSxVQUFVLEdBQUcsSUFBSSxDQUFDLE1BQU0sQ0FBQyxPQUFPLEVBQUUsQ0FBQztRQUV6Qyw0Q0FBNEM7UUFDNUMsTUFBTSxPQUFPLEdBQUcsSUFBSSwyQkFBUSxFQUFFLENBQUM7UUFDL0IsT0FBTyxDQUFDLEdBQUcsQ0FBQyxNQUFNLEVBQUUsTUFBTSxDQUFDLENBQUM7UUFDNUIsT0FBTyxDQUFDLEdBQUcsQ0FBQyxZQUFZLEVBQUUsSUFBSSxDQUFDLFNBQVMsQ0FBQyxNQUFNLENBQUMsSUFBSSxDQUFDLENBQUM7UUFDdEQsT0FBTyxDQUFDLEdBQUcsQ0FBQyxZQUFZLEVBQUUsVUFBVSxDQUFDLENBQUM7UUFFdEMsMENBQTBDO1FBQzFDLElBQUksVUFBVSxJQUFJLE1BQU0sRUFBRTtZQUN0QixNQUFNLE1BQU0sR0FBRyxzQkFBWSxDQUFDLFdBQVcsRUFBRSxDQUFDO1lBQzFDLHFDQUFxQztZQUNyQyxNQUFNLENBQUMsYUFBYSxDQUFDLElBQUksQ0FBQyxtQ0FBb0IsQ0FBQyxpQkFBaUIsRUFBRSxPQUFPLENBQUMsU0FBUyxFQUFFLENBQUMsQ0FBQztTQUMxRjtRQUVELElBQUksQ0FBQyxrQkFBa0IsQ0FBQyxVQUFVLENBQUMsYUFBYSxDQUFDLENBQUM7SUFDdEQsQ0FBQztDQUNKO0FBakNELGdDQWlDQyJ9","assetPath":"Assets/Scripts/GroundTrigger.ts","manifest":{"properties":[{"assembly":"UnityEngine.AnimationModule","name":"tileBounceAnimator","type":"UnityEngine.Animator","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]}],"name":"GroundTrigger","description":""},"isCompiled":true}'
+  typescriptHash: 90f831a3c08ab89846bc41f53116bb3c

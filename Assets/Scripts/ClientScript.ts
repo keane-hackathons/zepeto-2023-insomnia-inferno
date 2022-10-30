@@ -1,9 +1,12 @@
+import { transform } from 'typescript';
 import { GameObject, Quaternion, Vector3, WaitForSeconds, Transform } from 'UnityEngine';
-import { CharacterState, SpawnInfo, ZepetoPlayers } from 'ZEPETO.Character.Controller';
+import { CharacterState, SpawnInfo, ZepetoCharacter, ZepetoPlayers } from 'ZEPETO.Character.Controller';
 import { Room } from 'ZEPETO.Multiplay';
 import { Player, State } from 'ZEPETO.Multiplay.Schema';
 import { ZepetoScriptBehaviour } from 'ZEPETO.Script'
 import { WorldService, ZepetoWorldMultiplay } from 'ZEPETO.World';
+import Ground from './Ground';
+import GroundManager from './GroundManager';
 
 export enum MultiplayMessageType {
   
@@ -11,7 +14,22 @@ export enum MultiplayMessageType {
     CharacterTransform = "CharacterTransform",
 
     // For Animation states
-    CharacterState = "CharacterState"
+    CharacterState = "CharacterState",
+
+    //Ground
+    ChangeGroundColor = "ChangeGroundColor",
+    ChangeGroundColorReceive = "ChangeGroundColorReceive",
+
+    //Game States
+    Waiting = "Waiting",
+
+    GameReady = "GameReady",
+
+    GameStart = "GameStart",
+
+    GameFinish = "GameFinish",
+
+    Result = "Result"
 }
 
 //Transform position data
@@ -26,6 +44,20 @@ export type MultiplayMessageCharacterState = {
 
     //state id number for translation to enum. 
     characterState: number
+}
+
+export type MultiplayMessageChangeGroundColor = {
+    //Ground Color ID
+    groundType: number,
+    //The Team it belongs to
+    team: number,
+    //Triggered Ground Name. 
+    groundName: string,
+}
+
+type GameTeamInfo = {
+    character: ZepetoCharacter,
+    team: number
 }
 
 export default class ClientScript extends ZepetoScriptBehaviour {
@@ -47,6 +79,8 @@ export default class ClientScript extends ZepetoScriptBehaviour {
     //Map of the players coming from the multiplay server. 
     private multiplayPlayers: Map<string, Player> = new Map<string, Player>();
 
+    public gameTeamList: Map<string, GameTeamInfo> = new Map<string, GameTeamInfo>();
+
 
     public spawnLocation: GameObject;
 
@@ -62,6 +96,54 @@ export default class ClientScript extends ZepetoScriptBehaviour {
         this.multiplay.RoomJoined += (room: Room) => {
             //Called each time the room state variables are altered
             room.OnStateChange += this.OnStateChange;
+
+            this.multiplayRoom.AddMessageHandler(MultiplayMessageType.ChangeGroundColorReceive, (message: MultiplayMessageChangeGroundColor) => {
+                //Cache the ground manager
+                const groundManager = GroundManager.GetInstance();
+
+                //Parse the ground index by spliting the ground name (ground_x) and spliting by the "_" to convert to a number. 
+                const groundNumber = Number(message.groundName.split("_")[1]);
+
+                //Grab the corresponding ground object based on the parsed id. 
+                const ground: Ground = groundManager?.groundList[groundNumber].GetComponent<Ground>();
+
+                // CHange the ground color 
+                ground?.SetType(message.team);
+            });
+
+            this.multiplayRoom.AddMessageHandler(MultiplayMessageType.Waiting, (message => {
+                // Reset Positions and tiles. 
+                this.ResetGame();
+            
+                // Enable Character Control
+                this.OnOffCharacterControl(true);
+            }));
+
+            this.multiplayRoom.AddMessageHandler(MultiplayMessageType.GameReady, (message => {
+                // Reset Positions and tiles. 
+                this.ResetGame();
+            
+                // Disable Character control
+                this.OnOffCharacterControl(false);
+            }));
+
+            this.multiplayRoom.AddMessageHandler(MultiplayMessageType.GameStart, (message => {
+                // Reset Positions and tiles. 
+                this.ResetGame();
+            
+                // Enable Character Control
+                this.OnOffCharacterControl(true);
+            }));
+
+            this.multiplayRoom.AddMessageHandler(MultiplayMessageType.GameFinish, (message => {
+
+                // Disable Character Control 
+                this.OnOffCharacterControl(false);
+            }));
+
+            this.multiplayRoom.AddMessageHandler(MultiplayMessageType.Result, (message => {
+
+            }));
         }
     }
 
@@ -159,6 +241,15 @@ export default class ClientScript extends ZepetoScriptBehaviour {
                         zepetoPlayer.character.Jump();
                 }
             }
+
+            // Create GameTeamInfo instance
+            const teamInfo: GameTeamInfo = {
+                character: zepetoPlayer.character,
+                team: state.players.get_Item(userId).team
+            }
+
+            // Set up the team based on the character name
+            this.gameTeamList.set(zepetoPlayer.character.name, teamInfo);
         });
     }
 
@@ -213,6 +304,36 @@ export default class ClientScript extends ZepetoScriptBehaviour {
 
         // Send the message to the server. 
         this.multiplayRoom.Send(MultiplayMessageType.CharacterTransform, message);
+    }
+
+    //Get Team ID based on the character name (Should be set to the userid)
+    GetTeam(gameObjectName: string) {
+        if (!this.gameTeamList.has(gameObjectName)) return 0;
+        return this.gameTeamList.get(gameObjectName).team;
+    }
+
+    //Enable/Disable Character Control 
+    OnOffCharacterControl(bool: boolean) {
+        if (bool) {
+            this.objZepetoPlayers.characterData.walkSpeed = 2;
+            this.objZepetoPlayers.characterData.runSpeed = 5;
+            this.objZepetoPlayers.characterData.jumpPower = 5;
+        } else {
+            //Disable movement by setting all values to 0. 
+            this.objZepetoPlayers.characterData.walkSpeed = 0;
+            this.objZepetoPlayers.characterData.runSpeed = 0;
+            this.objZepetoPlayers.characterData.jumpPower = 0;
+        }
+    }
+
+    ResetGame() {
+        //Reset character positions to a specific point. 
+          this.gameTeamList.forEach(info => {
+              info.character.Teleport(new Vector3(-3.5 + (7 * (info.team - 1)), 1, 0), Quaternion.identity);
+          });
+          
+        //Reset the ground to unoccupied. 
+        GroundManager.GetInstance()?.ResetGround();
     }
 
 }
