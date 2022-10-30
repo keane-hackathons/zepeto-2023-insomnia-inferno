@@ -1,0 +1,117 @@
+fileFormatVersion: 2
+guid: bd91609f1806f034cb1e908f09c1a4bd
+importerOverride: ZEPETO.Script.Compiler:ZEPETO.Script:TypescriptAssetImporter
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: -1123457745, guid: 54cf806323ffe4418a4ce4cc63fe6b9d, type: 3}
+  isAssemblyDeclarations: 0
+  assembly: 
+  generateAllTypes: 1
+  types: []
+  generateWrapper: 0
+  overrideWrapperTypes: 0
+  wrapperTypes: []
+  WrapperFilters: []
+  wrapperOutputDirectory: Generated
+  compiledResult: '{"source":"\"use strict\";\r\nObject.defineProperty(exports, \"__esModule\",
+    { value: true });\r\nexports.MultiplayMessageType = void 0;\r\nconst UnityEngine_1
+    = require(\"UnityEngine\");\r\nconst ZEPETO_Character_Controller_1 = require(\"ZEPETO.Character.Controller\");\r\nconst
+    ZEPETO_Script_1 = require(\"ZEPETO.Script\");\r\nconst ZEPETO_World_1 = require(\"ZEPETO.World\");\r\nvar
+    MultiplayMessageType;\r\n(function (MultiplayMessageType) {\r\n    // When position
+    is synced\r\n    MultiplayMessageType[\"CharacterTransform\"] = \"CharacterTransform\";\r\n   
+    // For Animation states\r\n    MultiplayMessageType[\"CharacterState\"] = \"CharacterState\";\r\n})(MultiplayMessageType
+    = exports.MultiplayMessageType || (exports.MultiplayMessageType = {}));\r\nclass
+    ClientScript extends ZEPETO_Script_1.ZepetoScriptBehaviour {\r\n    constructor()
+    {\r\n        super(...arguments);\r\n        //Map of the players coming from
+    the multiplay server. \r\n        this.multiplayPlayers = new Map();\r\n    }\r\n   
+    static GetInstance() {\r\n        if (!ClientScript.instance) {\r\n           
+    const targetObj = UnityEngine_1.GameObject.Find(\"Client\");\r\n            if
+    (targetObj)\r\n                ClientScript.instance = targetObj.GetComponent($typeof(ClientScript));\r\n       
+    }\r\n        return ClientScript.instance;\r\n    }\r\n    Start() {\r\n       
+    //Cache the room in the Callback when the server creates a room object. \r\n       
+    this.multiplay.add_RoomCreated((room) => {\r\n            this.multiplayRoom
+    = room;\r\n        });\r\n        //Callback for when the room is joined. \r\n       
+    this.multiplay.add_RoomJoined((room) => {\r\n            //Called each time the
+    room state variables are altered\r\n            room.add_OnStateChange(this.OnStateChange.bind(this));\r\n       
+    });\r\n    }\r\n    OnStateChange(state, isFirst) {\r\n        // Called for
+    the first state change only\r\n        if (isFirst) {\r\n            // Apply
+    sync logic for player if they already exist. \r\n            state.players.ForEach((userId,
+    player) => { this.OnPlayerAdd(player, userId); });\r\n            // Register
+    Player Add/Remove events \r\n            state.players.add_OnAdd((player, userId)
+    => { this.OnPlayerAdd(player, userId); });\r\n            state.players.add_OnRemove((player,
+    userId) => { this.OnPlayerRemove(player, userId); });\r\n            state.timer.add_OnChange(()
+    => { this.OnCounterChange(state.timer.value); });\r\n            this.InitializeCharacter(state);\r\n       
+    }\r\n    }\r\n    OnPlayerAdd(player, userId) {\r\n        if (this.multiplayPlayers.has(userId))\r\n           
+    return;\r\n        // Cache the player to our map \r\n        this.multiplayPlayers.set(userId,
+    player);\r\n        //Create spawn info for our new character. \r\n        const
+    spawnInfo = new ZEPETO_Character_Controller_1.SpawnInfo();\r\n        const position
+    = this.spawnLocation.transform.position;\r\n        spawnInfo.position = position;\r\n       
+    spawnInfo.rotation = UnityEngine_1.Quaternion.identity;\r\n        // If the
+    added player id matches the world service id, we know this is the local player.
+    \r\n        const isLocal = ZEPETO_World_1.WorldService.userId === userId;\r\n       
+    // Instantiate character with the above settings. \r\n        $extension(\"ZEPETO.Character.Controller.ZepetoPlayersExtension\").CreatePlayerWithUserId(ZEPETO_Character_Controller_1.ZepetoPlayers.instance,
+    userId, userId, spawnInfo, isLocal);\r\n    }\r\n    OnPlayerRemove(player, userId)
+    {\r\n        if (!this.multiplayPlayers.has(userId))\r\n            return;\r\n       
+    ZEPETO_Character_Controller_1.ZepetoPlayers.instance.RemovePlayer(userId);\r\n   
+    }\r\n    InitializeCharacter(state) {\r\n        // Callback when the localplayer
+    is fully loaded into the scene.\r\n        ZEPETO_Character_Controller_1.ZepetoPlayers.instance.OnAddedLocalPlayer.AddListener(()
+    => {\r\n            // cache the player and userIds\r\n            const zepetoPlayer
+    = ZEPETO_Character_Controller_1.ZepetoPlayers.instance.LocalPlayer.zepetoPlayer;\r\n           
+    const userId = ZEPETO_World_1.WorldService.userId;\r\n            // Change the
+    character''s name to the userID\r\n            zepetoPlayer.character.name =
+    userId;\r\n            // Send a message to the server every time the character
+    state is altered. \r\n            zepetoPlayer.character.OnChangedState.AddListener((current,
+    previous) => {\r\n                this.SendMessageCharacterState(current);\r\n           
+    });\r\n            // Check the character transform positions every 0.1 seconds
+    and update. \r\n            this.StartCoroutine(this.SendMessageCharacterTransformLoop(0.1));\r\n       
+    });\r\n        // Callback when the player is fully loaded into the scene. \r\n       
+    ZEPETO_Character_Controller_1.ZepetoPlayers.instance.OnAddedPlayer.AddListener((userId)
+    => {\r\n            //Cache the player by userId\r\n            const zepetoPlayer
+    = ZEPETO_Character_Controller_1.ZepetoPlayers.instance.GetPlayer(userId);\r\n           
+    // Set the character object''s name to the userId\r\n            zepetoPlayer.character.name
+    = userId;\r\n            //Grab the player instance from the server schema map
+    based on the userId\r\n            const player = this.multiplayRoom.State.players.get_Item(userId);\r\n           
+    // Add to the OnChange Schema Type Callback Message\r\n            player.position.add_OnChange(()
+    => {\r\n                // Only sync for everyone but the local player\r\n               
+    if (zepetoPlayer.isLocalPlayer == false) {\r\n                    // Cache the
+    postion values. \r\n                    const x = player.position.x;\r\n                   
+    const y = player.position.y;\r\n                    const z = player.position.z;\r\n                   
+    const position = new UnityEngine_1.Vector3(x, y, z);\r\n                    //
+    Directly apply the server position if the position deviates past a certain range
+    (Handle sync issues)\r\n                    if (UnityEngine_1.Vector3.Distance(position,
+    zepetoPlayer.character.transform.position) > 7) {\r\n                       
+    zepetoPlayer.character.transform.position = position;\r\n                   
+    }\r\n                    // Move the character to the target position. \r\n                   
+    zepetoPlayer.character.MoveToPosition(position);\r\n                    //Jump
+    if the character state has changed to jump. \r\n                    if (player.characterState
+    === ZEPETO_Character_Controller_1.CharacterState.JumpIdle || player.characterState
+    === ZEPETO_Character_Controller_1.CharacterState.JumpMove)\r\n                       
+    zepetoPlayer.character.Jump();\r\n                }\r\n            });\r\n       
+    });\r\n    }\r\n    OnCounterChange(count) { }\r\n    SendMessageCharacterState(characterState)
+    {\r\n        // Create the character state message body. \r\n        const message
+    = {\r\n            characterState: characterState\r\n        };\r\n        //
+    Send the character state. \r\n        this.multiplayRoom.Send(MultiplayMessageType.CharacterState,
+    message);\r\n    }\r\n    *SendMessageCharacterTransformLoop(tick) {\r\n       
+    while (true) {\r\n            // Wait For the designated amount of time (tick)\r\n           
+    yield new UnityEngine_1.WaitForSeconds(tick);\r\n            // Only run if the
+    multiplay room instance exists and the room is connected. \r\n            if
+    (this.multiplayRoom != null && this.multiplayRoom.IsConnected) {\r\n               
+    // Cache the userId. \r\n                const userId = ZEPETO_World_1.WorldService.userId;\r\n               
+    // Only run if the player exists in the zepeto players map. \r\n               
+    if (ZEPETO_Character_Controller_1.ZepetoPlayers.instance.HasPlayer(userId)) {\r\n                   
+    //Cache the character controller. \r\n                    const character = ZEPETO_Character_Controller_1.ZepetoPlayers.instance.GetPlayer(userId).character;\r\n                   
+    // Send the character transform update message if not idling. (Send when character
+    moves/jumps)\r\n                    if (character.CurrentState != ZEPETO_Character_Controller_1.CharacterState.Idle)\r\n                       
+    this.SendMessageCharacterTransform(character.transform);\r\n                }\r\n           
+    }\r\n        }\r\n    }\r\n    SendMessageCharacterTransform(transform) {\r\n       
+    //Cache the local transform position. \r\n        const position = transform.localPosition;\r\n       
+    // Create the message body \r\n        const message = {\r\n            positionX:
+    position.x,\r\n            positionY: position.y,\r\n            positionZ: position.z\r\n       
+    };\r\n        // Send the message to the server. \r\n        this.multiplayRoom.Send(MultiplayMessageType.CharacterTransform,
+    message);\r\n    }\r\n}\r\nexports.default = ClientScript;\r\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQ2xpZW50U2NyaXB0LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiQ2xpZW50U2NyaXB0LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUFBLDZDQUF5RjtBQUN6Riw2RUFBdUY7QUFHdkYsaURBQXFEO0FBQ3JELCtDQUFrRTtBQUVsRSxJQUFZLG9CQU9YO0FBUEQsV0FBWSxvQkFBb0I7SUFFNUIsMEJBQTBCO0lBQzFCLGlFQUF5QyxDQUFBO0lBRXpDLHVCQUF1QjtJQUN2Qix5REFBaUMsQ0FBQTtBQUNyQyxDQUFDLEVBUFcsb0JBQW9CLEdBQXBCLDRCQUFvQixLQUFwQiw0QkFBb0IsUUFPL0I7QUFnQkQsTUFBcUIsWUFBYSxTQUFRLHFDQUFxQjtJQUEvRDs7UUFnQkksdURBQXVEO1FBQy9DLHFCQUFnQixHQUF3QixJQUFJLEdBQUcsRUFBa0IsQ0FBQztJQTBLOUUsQ0FBQztJQXhMRyxNQUFNLENBQUMsV0FBVztRQUNkLElBQUksQ0FBQyxZQUFZLENBQUMsUUFBUSxFQUFFO1lBQ3hCLE1BQU0sU0FBUyxHQUFHLHdCQUFVLENBQUMsSUFBSSxDQUFDLFFBQVEsQ0FBQyxDQUFDO1lBQzVDLElBQUksU0FBUztnQkFBRSxZQUFZLENBQUMsUUFBUSxHQUFHLFNBQVMsQ0FBQyxZQUFZLFNBQUMsWUFBWSxFQUFHLENBQUM7U0FDakY7UUFDRCxPQUFPLFlBQVksQ0FBQyxRQUFRLENBQUM7SUFDakMsQ0FBQztJQWVELEtBQUs7UUFDRCx3RUFBd0U7UUFDeEUsSUFBSSxDQUFDLFNBQVMsaUJBQWdCLENBQUMsSUFBVSxFQUFFLEVBQUU7WUFDekMsSUFBSSxDQUFDLGFBQWEsR0FBRyxJQUFJLENBQUM7UUFDOUIsQ0FBQyxFQUFDO1FBRUYsd0NBQXdDO1FBQ3hDLElBQUksQ0FBQyxTQUFTLGdCQUFlLENBQUMsSUFBVSxFQUFFLEVBQUU7WUFDeEMsdURBQXVEO1lBQ3ZELElBQUksbUJBQWtCLElBQUksQ0FBQyxhQUFhLGFBQUM7UUFDN0MsQ0FBQyxFQUFBO0lB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","assetPath":"Assets/Scripts/ClientScript.ts","manifest":{"properties":[{"assembly":"ZEPETO.World","name":"multiplay","type":"ZEPETO.World.ZepetoWorldMultiplay","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"","name":"multiplayRoom","type":"ZEPETO.Multiplay.Room","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.CoreModule","name":"spawnLocation","type":"UnityEngine.GameObject","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"ZEPETO.Character.Controller","name":"objZepetoPlayers","type":"ZEPETO.Character.Controller.ZepetoPlayers","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]}],"name":"ClientScript","description":""},"isCompiled":true}'
+  typescriptHash: 2588cdff65a76cc5460c74d8c21a327c
