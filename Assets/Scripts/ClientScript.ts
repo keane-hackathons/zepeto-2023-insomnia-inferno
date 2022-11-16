@@ -5,6 +5,7 @@ import { Room } from 'ZEPETO.Multiplay';
 import { Player, State } from 'ZEPETO.Multiplay.Schema';
 import { ZepetoScriptBehaviour } from 'ZEPETO.Script'
 import { WorldService, ZepetoWorldMultiplay } from 'ZEPETO.World';
+import GameUI from './GameUI';
 import Ground from './Ground';
 import GroundManager from './GroundManager';
 
@@ -109,9 +110,25 @@ export default class ClientScript extends ZepetoScriptBehaviour {
 
                 // CHange the ground color 
                 ground?.SetType(message.team);
+
+                // Get GameUI
+                const gameUI = GameUI.GetInstance();
+
+                // score update
+                gameUI.UpdateScore();
             });
 
             this.multiplayRoom.AddMessageHandler(MultiplayMessageType.Waiting, (message => {
+
+                // Get GameUI
+                const gameUI = GameUI.GetInstance();
+
+                // Disable results screen
+                gameUI?.DisableResult();
+
+                // scoreboard not visible
+                gameUI?.OnOffScoreboard(false);
+
                 // Reset Positions and tiles. 
                 this.ResetGame();
             
@@ -120,6 +137,13 @@ export default class ClientScript extends ZepetoScriptBehaviour {
             }));
 
             this.multiplayRoom.AddMessageHandler(MultiplayMessageType.GameReady, (message => {
+
+                // Get GameUI
+                const gameUI = GameUI.GetInstance();
+
+                // Activate the Ready object
+                gameUI?.OnOffGameReady(true);
+
                 // Reset Positions and tiles. 
                 this.ResetGame();
             
@@ -130,6 +154,15 @@ export default class ClientScript extends ZepetoScriptBehaviour {
             this.multiplayRoom.AddMessageHandler(MultiplayMessageType.GameStart, (message => {
                 // Reset Positions and tiles. 
                 this.ResetGame();
+
+                // Get GameUI
+                const gameUI = GameUI.GetInstance();
+
+                // Activate the Start object
+                gameUI?.OnOffGameStart(true);
+
+                // Scoreboard display
+                gameUI?.OnOffScoreboard(true);
             
                 // Enable Character Control
                 this.OnOffCharacterControl(true);
@@ -137,12 +170,19 @@ export default class ClientScript extends ZepetoScriptBehaviour {
 
             this.multiplayRoom.AddMessageHandler(MultiplayMessageType.GameFinish, (message => {
 
+                // Get GameUI
+                const gameUI = GameUI.GetInstance();
+
+                // Activate the Finish object
+                gameUI?.OnOffGameFinish(true);
+
                 // Disable Character Control 
                 this.OnOffCharacterControl(false);
             }));
 
             this.multiplayRoom.AddMessageHandler(MultiplayMessageType.Result, (message => {
-
+                // Find the winner and show the results screen
+                GameUI.GetInstance()?.SetResult();
             }));
         }
     }
@@ -192,6 +232,8 @@ export default class ClientScript extends ZepetoScriptBehaviour {
             // cache the player and userIds
             const zepetoPlayer = ZepetoPlayers.instance.LocalPlayer.zepetoPlayer;
             const userId = WorldService.userId;
+
+            zepetoPlayer.character.gameObject.layer = 5;
 
             // Change the character's name to the userID
             zepetoPlayer.character.name = userId;
@@ -250,11 +292,21 @@ export default class ClientScript extends ZepetoScriptBehaviour {
 
             // Set up the team based on the character name
             this.gameTeamList.set(zepetoPlayer.character.name, teamInfo);
+
+            // Save player thumbnails in GameUI (A variable for saving thumbnails named playerThumbnails is already declared in GameUI.)
+            const gameUI = GameUI.GetInstance();
+            gameUI?.GetThumbnail(userId);
         });
     }
 
 
-    private OnCounterChange(count: number) {}
+    private OnCounterChange(count: number) {
+        // To prevent timer values ​​from being displayed as -1, -2, -3 after the game ends, count is updated only when counter.count value is greater than or equal to 0
+        if (count >= 0) {
+            GameUI.GetInstance().TimerText.text = count.toString();
+        }
+    }
+
     private SendMessageCharacterState(characterState: CharacterState) {
         // Create the character state message body. 
         const message: MultiplayMessageCharacterState = {
@@ -334,6 +386,9 @@ export default class ClientScript extends ZepetoScriptBehaviour {
           
         //Reset the ground to unoccupied. 
         GroundManager.GetInstance()?.ResetGround();
+
+        // Call ResetScoreboard on GameUI script
+        GameUI.GetInstance()?.ResetScoreboard();
     }
 
 }

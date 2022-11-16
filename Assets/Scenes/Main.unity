@@ -3455,6 +3455,7 @@ Transform:
   - {fileID: 1880967057}
   - {fileID: 1490981068}
   - {fileID: 1906634649}
+  - {fileID: 507429400}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3768,6 +3769,111 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3032444837748176530, guid: 016a7adc7de074d4eb0cbc9e25d64a24, type: 3}
   m_PrefabInstance: {fileID: 425223062}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &507429399
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 507429400}
+  - component: {fileID: 507429401}
+  m_Layer: 0
+  m_Name: GameUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &507429400
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 507429399}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 299932626}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &507429401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 507429399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1673316429, guid: 921f0445823004a16a499d629dd566a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  script:
+    keys:
+    - GameReady
+    - GameReadyAnimator
+    - GameStart
+    - GameStartAnimator
+    - GameFinish
+    - GameFinishAnimator
+    - Result
+    - ResultBackground
+    - ResultWin
+    - ResultDraw
+    - WinTitleText
+    - WinDescText
+    - DrawTitleText
+    - Scoreboard
+    - TimerText
+    - RedTeamScore
+    - PurpleTeamScore
+    - WinnerThumbnail
+    unityValues:
+    - {fileID: 143537633}
+    - {fileID: 143537649}
+    - {fileID: 143537641}
+    - {fileID: 143537648}
+    - {fileID: 143537657}
+    - {fileID: 143537650}
+    - {fileID: 143537656}
+    - {fileID: 143537588}
+    - {fileID: 143537656}
+    - {fileID: 143537620}
+    - {fileID: 143537570}
+    - {fileID: 143537569}
+    - {fileID: 143537575}
+    - {fileID: 143537632}
+    - {fileID: 143537573}
+    - {fileID: 143537592}
+    - {fileID: 143537572}
+    - {fileID: 143537483}
+    values:
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    unityArrayValues: []
+    arrayValues: []
+    script: {fileID: 4458252877524076426, guid: 62db18923656de44b8f991e3ae32f3a2, type: 3}
+    isExpaned: 0
 --- !u!1001 &573721226
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4868,7 +4974,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1089652769}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

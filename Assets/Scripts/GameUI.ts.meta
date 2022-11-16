@@ -1,0 +1,108 @@
+fileFormatVersion: 2
+guid: 62db18923656de44b8f991e3ae32f3a2
+importerOverride: ZEPETO.Script.Compiler:ZEPETO.Script:TypescriptAssetImporter
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: -1123457745, guid: 54cf806323ffe4418a4ce4cc63fe6b9d, type: 3}
+  isAssemblyDeclarations: 0
+  assembly: 
+  generateAllTypes: 1
+  types: []
+  generateWrapper: 0
+  overrideWrapperTypes: 0
+  wrapperTypes: []
+  WrapperFilters: []
+  wrapperOutputDirectory: Generated
+  compiledResult: '{"source":"\"use strict\";\r\nObject.defineProperty(exports, \"__esModule\",
+    { value: true });\r\nconst UnityEngine_1 = require(\"UnityEngine\");\r\nconst
+    ZEPETO_Character_Controller_1 = require(\"ZEPETO.Character.Controller\");\r\nconst
+    ZEPETO_Script_1 = require(\"ZEPETO.Script\");\r\nconst ZEPETO_World_1 = require(\"ZEPETO.World\");\r\nconst
+    ClientScript_1 = require(\"./ClientScript\");\r\nconst GroundManager_1 = require(\"./GroundManager\");\r\nvar
+    GroundType;\r\n(function (GroundType) {\r\n    GroundType[GroundType[\"None\"]
+    = 0] = \"None\";\r\n    GroundType[GroundType[\"Red\"] = 1] = \"Red\";\r\n   
+    GroundType[GroundType[\"Purple\"] = 2] = \"Purple\";\r\n})(GroundType || (GroundType
+    = {}));\r\nclass GameUI extends ZEPETO_Script_1.ZepetoScriptBehaviour {\r\n   
+    constructor() {\r\n        super(...arguments);\r\n        //Avatar thumbnails
+    of all players\r\n        this.playerThumbnails = new Map();\r\n        //Red
+    team color\r\n        this.redTeamColor = new UnityEngine_1.Color(232 / 255,
+    52 / 255, 78 / 255);\r\n        //Purple team color\r\n        this.purpleTeamColor
+    = new UnityEngine_1.Color(92 / 255, 70 / 255, 255 / 255);\r\n        //White
+    color\r\n        this.WhiteColor = new UnityEngine_1.Color(255 / 255, 255 / 255,
+    255 / 255);\r\n    }\r\n    static GetInstance() {\r\n        //if GameUI instance
+    doesn''t exist, we find the game object called \"GameUI\", call GetCpmponent
+    to get the GameUI script, and set GameUI.instance to this GameUI script\r\n       
+    if (!GameUI.instance) {\r\n            const targetObj = UnityEngine_1.GameObject.Find(\"GameUI\");\r\n           
+    if (targetObj)\r\n                GameUI.instance = targetObj.GetComponent($typeof(GameUI));\r\n       
+    }\r\n        return GameUI.instance;\r\n    }\r\n    Start() {\r\n    }\r\n   
+    //Toggle to turn on/off GameReady panel\r\n    OnOffGameReady(bool) {\r\n       
+    this.GameReady.SetActive(bool);\r\n        this.GameStart.SetActive(!bool);\r\n       
+    this.GameFinish.SetActive(!bool);\r\n    }\r\n    //Toggle to turn on/off GameStart
+    panel\r\n    OnOffGameStart(bool) {\r\n        this.GameReady.SetActive(!bool);\r\n       
+    this.GameStart.SetActive(bool);\r\n        this.GameFinish.SetActive(!bool);\r\n   
+    }\r\n    //Toggle to turn on/off OnOffScoreboard panel      \r\n    OnOffScoreboard(bool)
+    {\r\n        this.Scoreboard.SetActive(bool);\r\n    }\r\n    //Toggle to turn
+    on/off OnOffGameFinish panel     \r\n    OnOffGameFinish(bool) {\r\n        this.GameReady.SetActive(!bool);\r\n       
+    this.GameStart.SetActive(!bool);\r\n        this.GameFinish.SetActive(bool);\r\n   
+    }\r\n    //Updates score text by counting how many tiles of each color we have\r\n   
+    UpdateScore() {\r\n        const groundManager = GroundManager_1.default.GetInstance();\r\n       
+    const grounds = {\r\n            Red: 0,\r\n            Purple: 0\r\n       
+    };\r\n        groundManager.groundList.forEach((v, i) => {\r\n            switch
+    (v.GetType()) {\r\n                case GroundType.Red:\r\n                   
+    grounds.Red += 1;\r\n                    break;\r\n                case GroundType.Purple:\r\n                   
+    grounds.Purple += 1;\r\n                    break;\r\n            }\r\n       
+    });\r\n        //Set Score Text based on grounds.Red and grounds.Purple count\r\n       
+    this.RedTeamScore.text = grounds.Red.toString();\r\n        this.PurpleTeamScore.text
+    = grounds.Purple.toString();\r\n    }\r\n    ResetScoreboard() {\r\n        this.RedTeamScore.text
+    = ''0'';\r\n        this.PurpleTeamScore.text = ''0'';\r\n    }\r\n    getWinnerUserId(winTeam)
+    {\r\n        let winnerUserId;\r\n        ClientScript_1.default.GetInstance()?.gameTeamList.forEach((gameTeamInfo,
+    userId) => {\r\n            if (gameTeamInfo.team == winTeam) {\r\n               
+    winnerUserId = userId;\r\n            }\r\n        });\r\n        return winnerUserId;\r\n   
+    }\r\n    DisableResult() {\r\n        //make below panels not visible\r\n       
+    this.ResultWin.SetActive(false);\r\n        this.ResultDraw.SetActive(false);\r\n       
+    this.Result.SetActive(false);\r\n    }\r\n    ChangeImageBackgroundColor(imageObject,
+    color) {\r\n        imageObject.color = color;\r\n    }\r\n    SetResult() {\r\n       
+    //Get team scores by checking text value and converting to number\r\n       
+    const redTeamScore = Number(this.RedTeamScore.text);\r\n        const purpleTeamScore
+    = Number(this.PurpleTeamScore.text);\r\n        // Red team victory\r\n       
+    if (redTeamScore > purpleTeamScore) {\r\n            //get the userId of the
+    player that is on the Red team\r\n            const winnerUserId = this.getWinnerUserId(GroundType.Red);\r\n           
+    //get the name of the player by userId\r\n            const winnerName = $extension(\"ZEPETO.Character.Controller.Utils\").GetPlayerWithUserId(ZEPETO_Character_Controller_1.ZepetoPlayers.instance,
+    winnerUserId).name;\r\n            //Set the win text to \"Red Team Wins!\"\r\n           
+    this.WinTitleText.text = \"Red Team Wins!\";\r\n            //Get the correct
+    player thumbnail from the playerThumbnails map\r\n            this.WinnerThumbnail.sprite
+    = this.playerThumbnails.get(winnerUserId);\r\n            //Set the Win Description
+    text to the winner''s character name.\r\n            this.WinDescText.text =
+    winnerName;\r\n            //Change the background color to to red\r\n           
+    this.ChangeImageBackgroundColor(this.ResultBackground, this.redTeamColor);\r\n           
+    //Set Result to true.\r\n            this.Result.SetActive(true);\r\n           
+    //Set Result Win to true\r\n            this.ResultWin.SetActive(true);\r\n       
+    }\r\n        // Purple Team Victory\r\n        else if (purpleTeamScore > redTeamScore)
+    {\r\n            //get the userId of the player that is on the Red team\r\n           
+    const winnerUserId = this.getWinnerUserId(GroundType.Purple);\r\n           
+    //get the name of the player by userId\r\n            const winnerName = $extension(\"ZEPETO.Character.Controller.Utils\").GetPlayerWithUserId(ZEPETO_Character_Controller_1.ZepetoPlayers.instance,
+    winnerUserId).name;\r\n            //Set the win text to \"Purple Team Wins!\"\r\n           
+    this.WinTitleText.text = \"Purple Team Wins!\";\r\n            //Get the correct
+    player thumbnail from the playerThumbnails map\r\n            this.WinnerThumbnail.sprite
+    = this.playerThumbnails.get(winnerUserId);\r\n            //Set the Win Description
+    text to the winner''s character name.\r\n            this.WinDescText.text =
+    winnerName;\r\n            //Change the background color to to purple\r\n           
+    this.ChangeImageBackgroundColor(this.ResultBackground, this.purpleTeamColor);\r\n           
+    //Set Result to true.\r\n            this.Result.SetActive(true);\r\n           
+    //Set Result Win to true\r\n            this.ResultWin.SetActive(true);\r\n       
+    }\r\n        // Draw\r\n        else {\r\n            //Change the background
+    color to to white\r\n            this.ChangeImageBackgroundColor(this.ResultBackground,
+    this.WhiteColor);\r\n            //Set result panel visible\r\n            this.Result.SetActive(true);\r\n           
+    //Set result draw panel visible\r\n            this.ResultDraw.SetActive(true);\r\n       
+    }\r\n    }\r\n    GetThumbnail(userId) {\r\n        ZEPETO_World_1.ZepetoWorldHelper.GetProfileTexture(userId,
+    (texture) => {\r\n            const sprite = this.GetSprite(texture);\r\n           
+    this.playerThumbnails.set(userId, sprite);\r\n        }, (error) => {\r\n           
+    console.log(error);\r\n        });\r\n    }\r\n    GetSprite(texture) {\r\n       
+    const rect = new UnityEngine_1.Rect(0, 0, texture.width, texture.height);\r\n       
+    return UnityEngine_1.Sprite.Create(texture, rect, new UnityEngine_1.Vector2(0.5,
+    0.5));\r\n    }\r\n}\r\nexports.default = GameUI;\r\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiR2FtZVVJLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiR2FtZVVJLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQ0EsNkNBQXFHO0FBRXJHLDZFQUE0RDtBQUM1RCxpREFBcUQ7QUFDckQsK0NBQWlEO0FBQ2pELGlEQUEwQztBQUMxQyxtREFBNEM7QUFFNUMsSUFBSyxVQUFnQztBQUFyQyxXQUFLLFVBQVU7SUFBRywyQ0FBSSxDQUFBO0lBQUUseUNBQUcsQ0FBQTtJQUFFLCtDQUFNLENBQUE7QUFBQyxDQUFDLEVBQWhDLFVBQVUsS0FBVixVQUFVLFFBQXNCO0FBVXJDLE1BQXFCLE1BQU8sU0FBUSxxQ0FBcUI7SUFBekQ7O1FBMkRJLGtDQUFrQztRQUMzQixxQkFBZ0IsR0FBRyxJQUFJLEdBQUcsRUFBa0IsQ0FBQztRQUVwRCxnQkFBZ0I7UUFDUixpQkFBWSxHQUFHLElBQUksbUJBQUssQ0FBQyxHQUFHLEdBQUcsR0FBRyxFQUFFLEVBQUUsR0FBRyxHQUFHLEVBQUUsRUFBRSxHQUFHLEdBQUcsQ0FBQyxDQUFDO1FBRWhFLG1CQUFtQjtRQUNYLG9CQUFlLEdBQUcsSUFBSSxtQkFBSyxDQUFDLEVBQUUsR0FBRyxHQUFHLEVBQUUsRUFBRSxHQUFHLEdBQUcsRUFBRSxHQUFHLEdBQUcsR0FBRyxDQUFDLENBQUM7UUFFbkUsYUFBYTtRQUNMLGVBQVUsR0FBRyxJQUFJLG1CQUFLLENBQUMsR0FBRyxHQUFHLEdBQUcsRUFBRSxHQUFHLEdBQUcsR0FBRyxFQUFFLEdBQUcsR0FBRyxHQUFHLENBQUMsQ0FBQztJQWlLcEUsQ0FBQztJQS9KRyxNQUFNLENBQUMsV0FBVztRQUNkLHNLQUFzSztRQUN4SyxJQUFJLENBQUMsTUFBTSxDQUFDLFFBQVEsRUFBRTtZQUNsQixNQUFNLFNBQVMsR0FBRyx3QkFBVSxDQUFDLElBQUksQ0FBQyxRQUFRLENBQUMsQ0FBQztZQUM1QyxJQUFJLFNBQVM7Z0JBQUUsTUFBTSxDQUFDLFFBQVEsR0FBRyxTQUFTLENBQUMsWUFB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","assetPath":"Assets/Scripts/GameUI.ts","manifest":{"properties":[{"assembly":"UnityEngine.CoreModule","name":"GameReady","type":"UnityEngine.GameObject","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.AnimationModule","name":"GameReadyAnimator","type":"UnityEngine.Animator","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.CoreModule","name":"GameStart","type":"UnityEngine.GameObject","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.AnimationModule","name":"GameStartAnimator","type":"UnityEngine.Animator","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.CoreModule","name":"GameFinish","type":"UnityEngine.GameObject","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.AnimationModule","name":"GameFinishAnimator","type":"UnityEngine.Animator","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.CoreModule","name":"Result","type":"UnityEngine.GameObject","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.UI","name":"ResultBackground","type":"UnityEngine.UI.Image","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.CoreModule","name":"ResultWin","type":"UnityEngine.GameObject","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.CoreModule","name":"ResultDraw","type":"UnityEngine.GameObject","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"Unity.TextMeshPro","name":"WinTitleText","type":"TMPro.TextMeshProUGUI","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"Unity.TextMeshPro","name":"WinDescText","type":"TMPro.TextMeshProUGUI","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"Unity.TextMeshPro","name":"DrawTitleText","type":"TMPro.TextMeshProUGUI","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.CoreModule","name":"Scoreboard","type":"UnityEngine.GameObject","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"Unity.TextMeshPro","name":"TimerText","type":"TMPro.TextMeshProUGUI","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"Unity.TextMeshPro","name":"RedTeamScore","type":"TMPro.TextMeshProUGUI","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"Unity.TextMeshPro","name":"PurpleTeamScore","type":"TMPro.TextMeshProUGUI","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"UnityEngine.UI","name":"WinnerThumbnail","type":"UnityEngine.UI.Image","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]},{"assembly":"","name":"playerThumbnails","type":"Map","isArray":false,"enumKeys":[],"enumValues":[],"attributes":[]}],"name":"GameUI","description":""},"isCompiled":true}'
+  typescriptHash: 42e4bb6f63a32f913dd6bc1ccec4ae0b
